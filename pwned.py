@@ -1,18 +1,21 @@
 
 import hashlib, argparse
-import urllib3, certifi
+import urllib3, certifi, getpass
 
 def result_parsed(data):
   lines = data.split('\r\n')
   return [l.split(':')  for l in lines]
 
-def main(pw=None, hash=None):
+def main(pw=None, print_pw=False):
+  # getpass
+  if pw is None:
+    pw = getpass.getpass()
+
   #
   url_template = 'https://api.pwnedpasswords.com/range/{}'
 
   # hash of password:
-  if hash is None:
-    hash = hashlib.sha1(pw.encode('utf-8')).hexdigest().upper()
+  hash = hashlib.sha1(pw.encode('utf-8')).hexdigest().upper()
 
   # first 5 characters of hashed password:
   hash5 = hash[:5]
@@ -31,6 +34,8 @@ def main(pw=None, hash=None):
   for tail, count in result:
     if hash == hash5 + tail:
       pwned = True
+      if print_pw:
+        print(pw)
       print('hash: {}'.format(hash))
       print('Pwned {} times'.format(count))
       break
@@ -39,7 +44,7 @@ def main(pw=None, hash=None):
 
 if __name__ == '__main__':
   _parser = argparse.ArgumentParser()
-  _parser.add_argument('--pw', help='password', type=str, default='password1')
-  _parser.add_argument('--hash', help='hash', type=str)
+  _parser.add_argument('--pw', help='password', type=str)
+  _parser.add_argument('--print-pw', action='store_true', default=False)
   args = _parser.parse_args()
-  main(args.pw, hash=args.hash)
+  main(args.pw, args.print_pw)
