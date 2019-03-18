@@ -30,12 +30,11 @@ def main(pw=None, print_pw=False):
   result = result_parsed(r.data.decode('utf-8'))
 
   # Try to match original hash
+  if print_pw: print(pw)
   pwned = False
   for tail, count in result:
     if hash == hash5 + tail:
       pwned = True
-      if print_pw:
-        print(pw)
       print('hash: {}'.format(hash))
       print('Pwned {} times'.format(count))
       break
@@ -44,7 +43,7 @@ def main(pw=None, print_pw=False):
 
 if __name__ == '__main__':
   _parser = argparse.ArgumentParser()
-  _parser.add_argument('--pw', help='password', type=str)
-  _parser.add_argument('--print-pw', action='store_true', default=False)
+  _parser.add_argument('--pw', help='password. Leave this blank to enter password on getpass prompt.', type=str)
+  _parser.add_argument('--print-pw', help='activate this to print entered password on screen', action='store_true', default=False)
   args = _parser.parse_args()
   main(args.pw, args.print_pw)
