@@ -29,17 +29,16 @@ def main(pw=None, print_pw=False):
   # Parse result
   result = result_parsed(r.data.decode('utf-8'))
 
-  # Try to match original hash
   if print_pw: print(pw)
-  pwned = False
+  # Try to match original hash
   for tail, count in result:
     if hash == hash5 + tail:
-      pwned = True
       print('hash: {}'.format(hash))
       print('Pwned {} times'.format(count))
-      break
-  if not pwned:
+      return
+  else:
     print('Not pwned')
+    return
 
 if __name__ == '__main__':
   _parser = argparse.ArgumentParser()
